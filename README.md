@@ -3,6 +3,8 @@ QuickBrew
     A lightweight iOS app that helps commuters decide whether they have enough time to stop for coffee on the way to their destination.
     The app calculates direct travel time, evaluates coffee shop detours, and determines whether each option still allows on-time arrival.
 
+Since Swift SIM uses San Fran, test with Coit Tower Address: 1 Telegraph Hill Blvd, San Francisco.
+
 Overview
 
 QuickBrew allows a user to enter a leaving time, arrival deadline, and destination address.
