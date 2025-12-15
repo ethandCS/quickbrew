@@ -1,218 +1,252 @@
 QuickBrew
 
-    A lightweight iOS app that helps commuters decide whether they have enough time to stop for coffee on the way to their destination.
-    The app calculates direct travel time, evaluates coffee shop detours, and determines whether each option still allows on-time arrival.
-
-Since Swift SIM uses San Fran, test with Coit Tower Address: 1 Telegraph Hill Blvd, San Francisco.
+QuickBrew is a lightweight iOS application that helps commuters decide whether they have enough time to stop for coffee on the way to their destination.
+ The app calculates direct travel time, evaluates coffee shop detours, and determines whether each option still allows the user to arrive on time.
+The goal of the project is clarity and explainability rather than visual complexity. The application emphasizes clean architecture, readable Swift code, and a clear flow of data across multiple screens.
 
 Overview
+QuickBrew allows a user to enter:
+ - A leaving time
+ - An arrival deadline
+ - A destination address
 
-QuickBrew allows a user to enter a leaving time, arrival deadline, and destination address.
-The app retrieves the user’s current location, calculates direct route travel time, finds nearby coffee shops, and computes detour routes. For each coffee shop,
-the app calculates the total added minutes, the predicted ETA at the destination, and whether the user remains on time. Users can select any option to open Apple Maps
-with a multi-stop route.
+The app then:
+ 1. Retrieves the user’s current location
+ 2. Geocodes the destination address
+ 3. Calculates the direct driving route
+ 4. Searches for nearby coffee shops
+ 5. Computes detour routes through each shop
+ 6. Displays whether each option keeps the user on time
+ 7. Visualizes the chosen route on an in-app map
+ 8. Optionally launches Apple Maps for turn-by-turn navigation
+
+This results in a complete, end-to-end commute planning experience across three screens.
 
 Core Features
+- User input for leaving time, arrival deadline, and destination
+- Current location retrieval using CoreLocation
+- Destination geocoding using MapKit
+- Driving route calculation using MapKit directions
+- Coffee shop search using MKLocalSearch
+- Per-shop detour analysis:
+    ~ User → Coffee Shop → Destination
+    ~ Fixed stop time (+10 minutes)
+    ~ Total detour minutes
+    ~ Arrival ETA
+    ~ On-time vs late determination
+- Results displayed in a table view
+- In-app map visualization of selected route
+- Apple Maps navigation with multi-stop routing
 
-  User inputs: leaving time, arrival deadline, destination address
-  Current location retrieval via CoreLocation
-  Geocoding destination address
-  Driving route calculation using MapKit
-  Coffee shop search using MKLocalSearch
-  Per-shop detour routing:
-
-    User → Coffee Shop → Destination
-    Added fixed stop time (default 10 minutes)
-    Total detour minutes
-    Arrival ETA
-    On-time / late determination
-  
-  Results displayed in a table view
-  Selecting any option opens the route in Apple Maps
+Application Flow
+ 1. User enters commute details on the first screen
+ 2. App retrieves GPS location
+ 3. Destination address is geocoded
+ 4. Direct route ETA is calculated
+ 5. Nearby coffee shops are searched
+ 6. For each shop:
+--Route from user to shop
+--Route from shop to destination
+--Stop time added
+--Arrival time calculated
+--On-time status determined
+ 7. Results are passed to the options screen
+ 8. User selects:
+--Direct route, or
+--A coffee shop route
+ 9. Selected route is displayed on an in-app map
+ 10. User can start Apple Maps navigation
 
 Project Structure and File Responsibilities
 
-ViewController.swift
-  
-  Handles all user inputs and performs core logic before transitioning to the results screen.
-  Responsibilities include:
-  
-      Reading leaving time, arrival deadline, and destination text
-      
-      Validating inputs
-      
-      Requesting the user’s GPS location
-      
-      Geocoding destination address
-      
-      Calculating the direct route travel time
-      
-      Searching for nearby coffee shops
-      
-      Calculating detour times for each shop (user → shop → destination)
-      
-      Preparing and passing all data into OptionsViewController
-  
-  This file acts as the "coordinator" of all heavy computation.
+***ViewController.swift
 
-OptionsViewController.swift
+This is the main input and coordination controller.
+ It performs all heavy computation before transitioning to the results screen.
+ 
+Responsibilities:
+--Reading leaving time, arrival deadline, and destination address
+--Validating user input
+--Requesting GPS permission and retrieving current location
+--Geocoding the destination address
+--Calculating direct route travel time
+--Searching for nearby coffee shops
+--Calculating detour times for each shop
+--Computing arrival times and on-time status
+--Passing all processed data forward
 
-  Displays all processed information to the user.
-  Responsibilities include:
-  
-    Showing arrival deadline, direct ETA, and overall on-time status
-    
-    Displaying a table of coffee shop options
-  
-      Shop name
-      
-      Extra minutes for detour
-      
-      ETA at final destination
-      
-      On-time / late indicator
-      
-    Launching Apple Maps with navigation
-  
-      Direct route: user → destination
-      
-      Coffee stop route: user → shop → destination
-  
-  This file contains no routing or search logic; it only presents results.
+This controller acts as the core “orchestrator” of the app.
 
+***OptionsViewController.swift
 
-CoffeeShop.swift
+This controller is responsible for presentation and user decisions only.
 
-  A lightweight data model struct representing each coffee shop.
-  Stores:
+Responsibilities:
+--Displaying arrival deadline and direct ETA
+--Showing overall on-time vs late status
+--Displaying a table of coffee shop options:
+----Shop name
+----Extra detour minutes
+----Arrival ETA
+----On-time / late indicator
+--Handling user selection:
+----Coffee shop selection
+----Direct route selection
+--Passing the chosen route to MapViewController
 
-    Name
-    
-    Location coordinate
-    
-    Detour minutes (total travel time including shop stop)
-    
-    Arrival time at destination
-    
-    Boolean on-time status
+No routing or search logic exists here.
 
-  This model is updated after routing results are computed.
+***MapViewController.swift
 
-CoffeeShopSearchService.swift
+This controller displays a live, interactive map inside the app.
 
-    Encapsulates MKLocalSearch logic.
-    Responsibilities include:
-    
-    Searching for nearby coffee shops based on the user’s coordinate
-    
-    Returning a list of CoffeeShop objects containing names and coordinates
+Responsibilities:
+--Visualizing the selected route using polylines
+--Displaying:
+----User location
+----Destination
+----Optional coffee stop
+--Drawing:
+----Direct route, or
+----Two-leg route (user → shop → destination)
+--Automatically fitting the map region to the route
+--Launching Apple Maps when the user confirms navigation
 
-  This keeps search logic separate from view controllers.
+This screen focuses entirely on visualization and navigation handoff.
+
+***CoffeeShop.swift
+
+A lightweight data model representing a coffee shop.
+
+Stores:
+--Name
+--Geographic coordinate
+--Total detour minutes
+--Arrival time at destination
+--On-time / late boolean
+
+The model is populated incrementally as routing data is computed.
+
+***CoffeeShopSearchService.swift
+
+Encapsulates all coffee shop search logic.
+
+Responsibilities:
+--Performing local searches using MKLocalSearch
+--Searching around the user’s location
+--Returning clean CoffeeShop model objects
+
+This keeps search logic out of view controllers.
 
 RoutingService.swift
+Encapsulates all routing logic using MapKit.
+Responsibilities:
+--Calculating driving travel time between two coordinates
+--Returning travel time in minutes
+--Used for:
+----Direct routes
+----User → coffee shop routes
+----Coffee shop → destination routes
 
-  Encapsulates MapKit routing logic.
-  Responsibilities include:
-
-    Calculating driving travel time between two coordinates
-    
-    Returning the travel time in minutes
-    
-    Used for both direct route and detour route calculations
-
-This service isolates routing complexity behind a simple interface.
-
-
+This isolates routing complexity behind a simple interface.
 
 Main.storyboard
+Defines the UI and navigation structure.
+Contains:
+ 1. ViewController (Input screen)
+ 2. OptionsViewController (Results screen)
+ 3. MapViewController (In-app map screen)
+ 4. NavigationController (handles back navigation)
 
-Defines the app’s UI.
-Contains two screens:
 
-  1.Input Screen (ViewController)
-  
-  2.Results Screen (OptionsViewController)
-  Embedded in a Navigation Controller to provide automatic back navigation.
+Segues:
+ViewController → OptionsViewController
+OptionsViewController → MapViewController
 
-Connected outlets include:
 
-  UIDatePickers
-  
-  UITextField
-  
-  UILabels
-  
-  UITableView
-  
 
-Info.plist Changes
+***Simulator Setup Instructions
 
-  Added usage descriptions required for location services:
-  
-    NSLocationWhenInUseUsageDescription
-  
-  This allows CoreLocation to prompt the user for permission.
+QuickBrew relies on simulated GPS data when running in the iOS Simulator.
+
+Recommended Test Location
+
+Since the simulator defaults to San Francisco, use the following destination for consistent testing:
+
+Coit Tower
+ 1 Telegraph Hill Blvd, San Francisco
+
+How to Set Simulator Location
+ 1. Run the app in the iOS Simulator
+ 2. From the top menu bar:
+    
+    Select Features
+    Select Location
+    Choose Custom Location
+    
+ 3. Enter coordinates near downtown San Francisco, for example:
+
+    Latitude: 37.785834
+    Longitude: -122.406417
+
+ 4. If location errors occur:
+    
+    Stop the simulator
+    Restart the simulator
+    Run the app again
+
+If the user location is not available, routing will not proceed.
+
+***How to Run the Application
+ 1. Open the project in Xcode
+ 2. Select an iOS Simulator device
+ 3. Ensure location permissions are allowed when prompted
+ 4. Enter:
+    Leaving time
+    Arrival deadline
+    Destination address
+ 5. Tap Get Directions
+ 6. Review options\
+ 7. Select a route
+ 8. View route on the in-app map
+ 9. Tap Start Navigation to open Apple Maps
 
 
 Technologies Used
-  UIKit
+UIKit
+Used for:
 
-    Used for all user interface elements, view controllers, navigation, table views, and interaction handling.
+    View controllers
+    Navigation controller
+    Table views
+    Buttons, labels, and layout
 
-  CoreLocation
+CoreLocation
+Used for:
 
-    Used to:
+    Requesting location permission
+    Retrieving the user’s current GPS coordinates
 
-    Request user permission
-    
-    Retrieve current GPS coordinates
-
-  MapKit
-
-    Used for:
+MapKit
+Used for:
     
     Geocoding destination addresses
-    
-    Route calculations for:
-    
-      Direct travel
-      
-      User → Coffee Shop
-      
-      Coffee Shop → Destination
-    
-    Searching for coffee shops using MKLocalSearch
-    
-    Opening Apple Maps for navigation
+    Route calculations
+    Coffee shop searches
+    In-app route visualization
+    Apple Maps navigation
 
-  Swift
+Swift
+Primary programming language used throughout the project.
 
-    Core application language used throughout, leveraging closures, structs, model objects, async coordination, and UIKit patterns.
+Summary
+QuickBrew is a fully functional, multi-screen iOS application that demonstrates:
+Real-world API usage
+--Asynchronous coordination
+--Clean separation of concerns
+--Clear data flow
+--Practical routing and mapping logic
 
-How Data Flows Through the App
 
-1. User enters inputs and presses “Get Directions”.
+The project emphasizes readability, correctness, and explainability, making it well-suited for academic evaluation and portfolio presentation.
 
-2. ViewController retrieves user location.
-
-3. Destination address is geocoded.
-
-4. Direct route travel time is calculated.
-
-5. Coffee shops are searched around the user’s location.
-
-    For each shop:
-    
-    Route 1: user → shop
-    
-    Route 2: shop → destination
-    
-    +10 minute stop time
-
-    Detour total, new ETA, and on-time status are computed
-
-7. All results are passed to OptionsViewController.
-
-8. OptionsViewController displays formatted results.
-
-9. User can tap any row to open Apple Maps with a multi-stop route.
