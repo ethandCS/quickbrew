@@ -10,7 +10,7 @@
 //  -- The address is converted into coordinates (geocoding).
 //  -- We delegate routing and coffee-shop searching to service classes.
 //  -- When all data is ready, it will be passed to the next screen
-//    for route comparison and coffee-stop decision making.
+//    for route     comparison and coffee-stop decision making.
 //
 
 //

@@ -36,6 +36,8 @@ class OptionsViewController: UIViewController, UITableViewDataSource, UITableVie
     var userCoordinate: CLLocationCoordinate2D?
     var destinationCoordinate: CLLocationCoordinate2D?
     
+    var selectedShop: CoffeeShop? // for passin to mapview
+    
     
     // ================================
     // OUTLETS (hooked up to storyboard)
@@ -174,21 +176,30 @@ class OptionsViewController: UIViewController, UITableViewDataSource, UITableVie
             return
         }
         
-        let userItem = MKMapItem(placemark: MKPlacemark(coordinate: user))
-        userItem.name = "Start"
+        selectedShop = coffeeShops[indexPath.row]
+        performSegue(withIdentifier: "toMapView", sender: self)
         
-        let shopItem = MKMapItem(placemark: MKPlacemark(coordinate: shop.coordinate))
-        shopItem.name = shop.name
+        // moving this logic below to mapviewcontroller to show route chosen
+        // BEFORE launching apple maps so passing necesarry info-- look below
+        // overriden prepare for segue below passing necessary
         
-        let destItem = MKMapItem(placemark: MKPlacemark(coordinate: destination))
-        destItem.name = "Destination"
         
-        MKMapItem.openMaps(
-            with: [userItem, shopItem, destItem],
-            launchOptions: [
-                MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-            ]
-        )
+//
+//        let userItem = MKMapItem(placemark: MKPlacemark(coordinate: user))
+//        userItem.name = "Start"
+//        
+//        let shopItem = MKMapItem(placemark: MKPlacemark(coordinate: shop.coordinate))
+//        shopItem.name = shop.name
+//        
+//        let destItem = MKMapItem(placemark: MKPlacemark(coordinate: destination))
+//        destItem.name = "Destination"
+//        
+//        MKMapItem.openMaps(
+//            with: [userItem, shopItem, destItem],
+//            launchOptions: [
+//                MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+//            ]
+//        )
     }
     
     
@@ -199,22 +210,37 @@ class OptionsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBAction func goDirectlyTapped(_ sender: UIButton) {
         print("Go Directly tapped")
+        // explicitly say: no coffee shop selected
+        selectedShop = nil
+
+        performSegue(withIdentifier: "toMapView", sender: self)
         
-        // make sure coords were passed from screen 1
-        guard let start = userCoordinate,
-              let dest = destinationCoordinate else {
-            print("missing coordinates for Apple Maps")
-            return
+        // moved logic to mapview to consolidate and show
+//        // make sure coords were passed from screen 1
+//        guard let start = userCoordinate,
+//              let dest = destinationCoordinate else {
+//            print("missing coordinates for Apple Maps")
+//            return
+//        }
+//        
+//        // wrap start + dest coords as MKMapItems (Apple Maps requirement)
+//        let startItem = MKMapItem(placemark: MKPlacemark(coordinate: start))
+//        let destItem = MKMapItem(placemark: MKPlacemark(coordinate: dest))
+//        
+//        // open Apple Maps w/ driving directions
+//        MKMapItem.openMaps(
+//            with: [startItem, destItem],
+//            launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
+//        )
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toMapView",
+           let mapVC = segue.destination as? MapViewController {
+
+            mapVC.userCoordinate = userCoordinate
+            mapVC.destinationCoordinate = destinationCoordinate
+            mapVC.selectedShop = selectedShop
         }
-        
-        // wrap start + dest coords as MKMapItems (Apple Maps requirement)
-        let startItem = MKMapItem(placemark: MKPlacemark(coordinate: start))
-        let destItem = MKMapItem(placemark: MKPlacemark(coordinate: dest))
-        
-        // open Apple Maps w/ driving directions
-        MKMapItem.openMaps(
-            with: [startItem, destItem],
-            launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-        )
     }
 }

@@ -3,6 +3,7 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Map view configurations" minToolsVersion="14.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -81,7 +82,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1197.709923664122" y="24.647887323943664"/>
+            <point key="canvasLocation" x="934" y="-592"/>
         </scene>
         <!--Options View Controller-->
         <scene sceneID="Zy8-gt-Hgj">
@@ -169,11 +170,54 @@
                         <outlet property="etaLabel" destination="wz3-lz-swb" id="2Fw-Ji-Vd7"/>
                         <outlet property="statusLabel" destination="xvN-D9-vso" id="lv4-aV-1XX"/>
                         <outlet property="tableView" destination="dj0-1a-m8y" id="NcX-6V-X3I"/>
+                        <segue destination="URQ-jw-ZoL" kind="show" identifier="toMapView" id="26r-jq-Wfh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Cre-4K-0ac" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2180.9160305343512" y="25.35211267605634"/>
+            <point key="canvasLocation" x="1332" y="139"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="Fb2-Kb-DKu">
+            <objects>
+                <viewController id="URQ-jw-ZoL" customClass="MapViewController" customModule="QuickBrew" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Kmn-HU-Z6w">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="z96-y8-hcd">
+                                <rect key="frame" x="48" y="182" width="296" height="489"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <standardMapConfiguration key="preferredConfiguration"/>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="51c-hx-Z4H">
+                                <rect key="frame" x="108" y="679" width="176" height="57"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Start Navigation"/>
+                                <connections>
+                                    <action selector="startNavigationTapped:" destination="URQ-jw-ZoL" eventType="touchUpInside" id="Vvs-F1-Ub8"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="quickbrew!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vJW-0z-wYt">
+                                <rect key="frame" x="16" y="83" width="171" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="U5F-zs-aRX"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="RYA-cW-lzO"/>
+                    <connections>
+                        <outlet property="mapView" destination="z96-y8-hcd" id="3fu-C7-FSG"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FxP-hn-kvg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2140" y="-592"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="i73-Su-3Ce">
@@ -191,7 +235,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2NH-aS-cWe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="119.84732824427481" y="3.5211267605633805"/>
+            <point key="canvasLocation" x="205" y="-41"/>
         </scene>
     </scenes>
     <resources>
