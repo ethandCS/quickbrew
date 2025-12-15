@@ -45,15 +45,15 @@ Application Flow
  4. Direct route ETA is calculated
  5. Nearby coffee shops are searched
  6. For each shop:
---Route from user to shop
---Route from shop to destination
---Stop time added
---Arrival time calculated
---On-time status determined
+  - Route from user to shop
+  - Route from shop to destination
+  - Stop time added
+  - Arrival time calculated
+  - On-time status determined
  7. Results are passed to the options screen
  8. User selects:
---Direct route, or
---A coffee shop route
+  - Direct route, or
+  - A coffee shop route
  9. Selected route is displayed on an in-app map
  10. User can start Apple Maps navigation
 
@@ -65,15 +65,15 @@ This is the main input and coordination controller.
  It performs all heavy computation before transitioning to the results screen.
  
 Responsibilities:
---Reading leaving time, arrival deadline, and destination address
---Validating user input
---Requesting GPS permission and retrieving current location
---Geocoding the destination address
---Calculating direct route travel time
---Searching for nearby coffee shops
---Calculating detour times for each shop
---Computing arrival times and on-time status
---Passing all processed data forward
+  - Reading leaving time, arrival deadline, and destination address
+  - Validating user input
+  - Requesting GPS permission and retrieving current location
+  - Geocoding the destination address
+  - Calculating direct route travel time
+  - Searching for nearby coffee shops
+  - Calculating detour times for each shop
+  - Computing arrival times and on-time status
+  - Passing all processed data forward
 
 This controller acts as the core “orchestrator” of the app.
 
@@ -82,17 +82,17 @@ This controller acts as the core “orchestrator” of the app.
 This controller is responsible for presentation and user decisions only.
 
 Responsibilities:
---Displaying arrival deadline and direct ETA
---Showing overall on-time vs late status
---Displaying a table of coffee shop options:
-----Shop name
-----Extra detour minutes
-----Arrival ETA
-----On-time / late indicator
---Handling user selection:
-----Coffee shop selection
-----Direct route selection
---Passing the chosen route to MapViewController
+ - Displaying arrival deadline and direct ETA
+ - Showing overall on-time vs late status
+ - Displaying a table of coffee shop options:
+    - Shop name
+    - Extra detour minutes
+    - Arrival ETA
+    - On-time / late indicator
+ - Handling user selection:
+    - Coffee shop selection
+    - Direct route selection
+ - Passing the chosen route to MapViewController
 
 No routing or search logic exists here.
 
@@ -101,16 +101,16 @@ No routing or search logic exists here.
 This controller displays a live, interactive map inside the app.
 
 Responsibilities:
---Visualizing the selected route using polylines
---Displaying:
-----User location
-----Destination
-----Optional coffee stop
---Drawing:
-----Direct route, or
-----Two-leg route (user → shop → destination)
---Automatically fitting the map region to the route
---Launching Apple Maps when the user confirms navigation
+ - Visualizing the selected route using polylines
+ - Displaying:
+    - User location
+    - Destination
+    - Optional coffee stop
+ - Drawing:
+    - Direct route, or
+    - Two-leg route (user → shop → destination)
+ - Automatically fitting the map region to the route
+ - Launching Apple Maps when the user confirms navigation
 
 This screen focuses entirely on visualization and navigation handoff.
 
@@ -119,11 +119,11 @@ This screen focuses entirely on visualization and navigation handoff.
 A lightweight data model representing a coffee shop.
 
 Stores:
---Name
---Geographic coordinate
---Total detour minutes
---Arrival time at destination
---On-time / late boolean
+  - Name
+  - Geographic coordinate
+  - Total detour minutes
+  - Arrival time at destination
+  - On-time / late boolean
 
 The model is populated incrementally as routing data is computed.
 
@@ -132,21 +132,21 @@ The model is populated incrementally as routing data is computed.
 Encapsulates all coffee shop search logic.
 
 Responsibilities:
---Performing local searches using MKLocalSearch
---Searching around the user’s location
---Returning clean CoffeeShop model objects
+  - Performing local searches using MKLocalSearch
+  - Searching around the user’s location
+  - Returning clean CoffeeShop model objects
 
 This keeps search logic out of view controllers.
 
 RoutingService.swift
 Encapsulates all routing logic using MapKit.
 Responsibilities:
---Calculating driving travel time between two coordinates
---Returning travel time in minutes
---Used for:
-----Direct routes
-----User → coffee shop routes
-----Coffee shop → destination routes
+ - Calculating driving travel time between two coordinates
+ - Returning travel time in minutes
+ - Used for:
+  --Direct routes
+  --User → coffee shop routes
+  --Coffee shop → destination routes
 
 This isolates routing complexity behind a simple interface.
 
